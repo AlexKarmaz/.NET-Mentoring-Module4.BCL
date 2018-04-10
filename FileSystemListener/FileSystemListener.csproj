@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -43,6 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\DirectoryElement .cs" />
+    <Compile Include="Configuration\DirectoryElementCollection.cs" />
+    <Compile Include="Configuration\FileSystemListenerConfigSection.cs" />
+    <Compile Include="Configuration\RuleElement.cs" />
+    <Compile Include="Configuration\RuleElementCollection.cs" />
     <Compile Include="EventArgs\CreatedEventArgs.cs" />
     <Compile Include="FilesWatcher.cs" />
     <Compile Include="RulesService.cs" />

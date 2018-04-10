@@ -1,37 +1,41 @@
-﻿using FileSystemListener.EventArgs;
+﻿using FileSystemListener.Configuration;
+using FileSystemListener.EventArgs;
 using FileSystemListener.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileSystemListener
 {
     class Program
     {
-        static ILogger logger;
-        static IWatcher<FileInfo> watcher;
-        static RulesService servise;
+        private static RulesService servise;
+        private static List<string> directories;
+        private static List<Rule> rules;
 
         static void Main(string[] args)
         {
-            CultureInfo cI = new CultureInfo("en-US");
+            ILogger logger;
+            IWatcher<FileInfo> watcher;
+            FileSystemListenerConfigSection config = ConfigurationManager.GetSection("fileSystemSection") as FileSystemListenerConfigSection;
 
-            CultureInfo.DefaultThreadCurrentCulture = cI;
-            CultureInfo.DefaultThreadCurrentUICulture = cI;
-            //CultureInfo.CurrentUICulture = cI;
-            //CultureInfo.CurrentCulture = cI;
+            if (config != null)
+            {
+                GetConfigurationSection(config);
+            }
+            else
+            {
+                Console.Write(/*Strings.ConfigNotFounded*/"Конфиг не найден");
+                return;
+            }
 
-            String[] directories = { "F:\\BCL", "F:\\BCL\\New folder" };
-            Rule[] rules = { new Rule { FilePattern = "\\.doc*", IsOrderAppended = false, IsDateAppended =false, DestinationFolder = "F:\\BCL\\DOCS" },
-                             new Rule { FilePattern = "\\.txt*", IsOrderAppended = true, IsDateAppended =true, DestinationFolder = "F:\\BCL\\TXTS"  }};
+            Console.WriteLine(/*config.Culture.DisplayName*/"Определена культура");
 
             logger = new Logger();
             watcher = new FilesWatcher(directories, logger);
-            servise = new RulesService( rules, "F:\\BCL\\Default", logger);
+            servise = new RulesService( rules, config.Rules.DefaultDirectory, logger);
 
             watcher.Created += OnCreated;
 
@@ -49,6 +53,31 @@ namespace FileSystemListener
         private static void OnCreated(object sender, CreatedEventArgs<FileInfo> args)
         {
             servise.MoveItem(args.CreatedItem);
+        }
+
+        private static void GetConfigurationSection(FileSystemListenerConfigSection config)
+        {
+            directories = new List<string>(config.Directories.Count);
+            rules = new List<Rule>();
+
+            foreach (DirectoryElement directory in config.Directories)
+            {
+                directories.Add(directory.Path);
+            }
+
+            foreach (RuleElement rule in config.Rules)
+            {
+                rules.Add(new Rule
+                {
+                    FilePattern = rule.FilePattern,
+                    DestinationFolder = rule.DestinationFolder,
+                    IsDateAppended = rule.IsDateAppended,
+                    IsOrderAppended = rule.IsOrderAppended
+                });
+            }
+
+            CultureInfo.DefaultThreadCurrentCulture = config.Culture;
+            CultureInfo.DefaultThreadCurrentUICulture = config.Culture;
         }
     }
 }
