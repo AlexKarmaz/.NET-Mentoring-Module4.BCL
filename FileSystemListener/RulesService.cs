@@ -31,7 +31,7 @@ namespace FileSystemListener
             {
                 var match = Regex.Match(file.Name, rule.FilePattern);
 
-                if (match.Success && match.Length == file.Name.Length)
+                if (match.Success /*&& match.Length == file.Name.Length*/)
                 {
                     rule.MatchesCount++;
                     string newPath = FormDestinationPath(file, rule);
@@ -53,9 +53,9 @@ namespace FileSystemListener
             string dir = Path.GetDirectoryName(to);
             Directory.CreateDirectory(dir);
 
-            //bool cannotAccessFile = true;
-            //do
-            //{
+            bool cannotAccessFile = true;
+            do
+            {
                 try
                 {
                     if (File.Exists(to))
@@ -63,19 +63,19 @@ namespace FileSystemListener
                         File.Delete(to);
                     }
                     File.Move(from, to);
-                   // cannotAccessFile = false;
+                    cannotAccessFile = false;
                 }
                 catch (FileNotFoundException)
                 {
                     logger.Log(/*Strings.CannotFindFile*/"Файл не найден");
-                    //break;
+                    break;
                 }
                 catch (IOException ex)
                 {
                     logger.Log(/*Strings.CannotFindFile*/"Возникли проблемы");
                 //await Task.Delay(FileCheckTimoutMiliseconds);
-            }
-            //} while (cannotAccessFile);
+                }
+            } while (cannotAccessFile);
         }
 
         private string FormDestinationPath(FileInfo file, Rule rule)
@@ -87,9 +87,9 @@ namespace FileSystemListener
 
             if (rule.IsDateAppended)
             {
-                var dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
-                dateTimeFormat.DateSeparator = ".";
-                destination.Append($"{destination}_{DateTime.Now.ToLocalTime().ToString(dateTimeFormat.ShortDatePattern)}");
+                DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+                dateTimeFormat.DateSeparator = " ";
+                destination.Append($"_{DateTime.Now.ToLocalTime().ToString(dateTimeFormat.ShortDatePattern)}");
             }
 
             if (rule.IsOrderAppended)

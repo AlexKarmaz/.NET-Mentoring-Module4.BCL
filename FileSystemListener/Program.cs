@@ -2,6 +2,7 @@
 using FileSystemListener.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,11 +18,18 @@ namespace FileSystemListener
 
         static void Main(string[] args)
         {
-            String[] directories = { "F:\\BCL", "F:\\BCL\\New folder" };
-            Rule[] rules = { new Rule { FilePattern = "*.doc*", IsOrderAppended = false, IsDateAppended =false, DestinationFolder = "F:\\BCL\\DOCS" },
-                             new Rule { FilePattern = "*.txt*", IsOrderAppended = true, IsDateAppended =true, DestinationFolder = "F:\\BCL\\DOCS"  }};
+            CultureInfo cI = new CultureInfo("en-US");
 
-            ILogger logger = new Logger();
+            CultureInfo.DefaultThreadCurrentCulture = cI;
+            CultureInfo.DefaultThreadCurrentUICulture = cI;
+            //CultureInfo.CurrentUICulture = cI;
+            //CultureInfo.CurrentCulture = cI;
+
+            String[] directories = { "F:\\BCL", "F:\\BCL\\New folder" };
+            Rule[] rules = { new Rule { FilePattern = "\\.doc*", IsOrderAppended = false, IsDateAppended =false, DestinationFolder = "F:\\BCL\\DOCS" },
+                             new Rule { FilePattern = "\\.txt*", IsOrderAppended = true, IsDateAppended =true, DestinationFolder = "F:\\BCL\\TXTS"  }};
+
+            logger = new Logger();
             watcher = new FilesWatcher(directories, logger);
             servise = new RulesService( rules, "F:\\BCL\\Default", logger);
 
