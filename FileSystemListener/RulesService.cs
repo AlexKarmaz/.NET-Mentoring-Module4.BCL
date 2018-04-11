@@ -31,21 +31,21 @@ namespace FileSystemListener
             {
                 var match = Regex.Match(file.Name, rule.FilePattern);
 
-                if (match.Success /*&& match.Length == file.Name.Length*/)
+                if (match.Success)
                 {
                     rule.MatchesCount++;
                     string newPath = FormDestinationPath(file, rule);
-                    logger.Log(/*Strings.RuleMatch*/"Правило совпало");
+                    logger.Log(Resources.Resources.RuleMatch);
                     MoveFile(oldPath, newPath);
-                    logger.Log(/*string.Format(Strings.FileMovedTemplate, file.FullName, to)*/"Файл перемещён");
+                    logger.Log(string.Format(Resources.Resources.FileMovedTemplate, file.FullName, newPath));
                     return;
                 }
             }
 
             string defaultPath = Path.Combine(defaultFolder, file.Name);
-            logger.Log(/*Strings.RuleNoMatch*/"Правила не совпали");
+            logger.Log(Resources.Resources.RuleNoMatch);
             MoveFile(oldPath, defaultPath);
-            logger.Log(/*string.Format(Strings.FileMovedTemplate, file.FullName, to)*/"Файл перемещён");
+            logger.Log(string.Format(Resources.Resources.FileMovedTemplate, file.FullName, defaultPath));
         }
 
         private void MoveFile(string from, string to)
@@ -67,13 +67,12 @@ namespace FileSystemListener
                 }
                 catch (FileNotFoundException)
                 {
-                    logger.Log(/*Strings.CannotFindFile*/"Файл не найден");
+                    logger.Log(Resources.Resources.CannotFindFile);
                     break;
                 }
                 catch (IOException ex)
                 {
-                    logger.Log(/*Strings.CannotFindFile*/"Возникли проблемы");
-                //await Task.Delay(FileCheckTimoutMiliseconds);
+                    logger.Log(Resources.Resources.CannotFindFile);
                 }
             } while (cannotAccessFile);
         }

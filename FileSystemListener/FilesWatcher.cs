@@ -44,7 +44,7 @@ namespace FileSystemListener
 
             fileSystemWatcher.Created += (sender, fileSystemEventArgs) =>
             {
-                logger.Log(/*string.Format(Strings.FileFoundedTemplate, fileSystemEventArgs.Name)*/$"File found: {fileSystemEventArgs.Name}");
+                logger.Log(string.Format(Resources.Resources.FileFoundedTemplate, fileSystemEventArgs.Name));
                 OnCreated(new FileInfo (fileSystemEventArgs.FullPath));
             };
 

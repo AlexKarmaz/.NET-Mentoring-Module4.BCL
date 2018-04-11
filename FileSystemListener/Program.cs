@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using Resources = FileSystemListener.Resources;
 
 namespace FileSystemListener
 {
@@ -27,11 +28,11 @@ namespace FileSystemListener
             }
             else
             {
-                Console.Write(/*Strings.ConfigNotFounded*/"Конфиг не найден");
+                Console.Write(Resources.Resources.ConfigNotFounded);
                 return;
             }
 
-            Console.WriteLine(/*config.Culture.DisplayName*/"Определена культура");
+            Console.WriteLine(config.Culture.DisplayName);
 
             logger = new Logger();
             watcher = new FilesWatcher(directories, logger);
@@ -39,7 +40,7 @@ namespace FileSystemListener
 
             watcher.Created += OnCreated;
 
-            Console.WriteLine("To exit enter\"Exit\" or Ctrl+C or Ctrl+Break ");
+            Console.WriteLine(Resources.Resources.Exit);
             string enteredString = "";
 
             while (true)
